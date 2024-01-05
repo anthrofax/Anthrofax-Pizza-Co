@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Form, redirect } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant.js";
 
 // https://uibakery.io/regex-library/phone-number
@@ -36,6 +36,10 @@ const fakeCart = [
 function CreateOrder() {
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
+  const { state } = useNavigation();
+  const isSubmitting = state === "submitting";
+
+  const errorMessage = useActionData()?.phone;
 
   return (
     <div>
@@ -52,6 +56,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          <p>{errorMessage}</p>
         </div>
 
         <div>
@@ -75,7 +80,9 @@ function CreateOrder() {
         <input type="hidden" value={JSON.stringify(cart)} name="cart" />
 
         <div>
-          <button>Order now</button>
+          <button disabled={isSubmitting}>
+            {isSubmitting ? "Placing order..." : "Order now"}
+          </button>
         </div>
       </Form>
     </div>
@@ -88,13 +95,21 @@ export async function action({ request }) {
 
   const realData = {
     ...data,
-    priority: data.priority === 'on',
-    cart: JSON.parse(data.cart)
-  }
+    priority: data.priority === "on",
+    cart: JSON.parse(data.cart),
+  };
 
-   const newOrder = await createOrder(realData);
+  console.log(realData);
+  const error = {};
 
-   return redirect(`/order/${newOrder.id}`)
+  if (!isValidPhone(realData.phone)) error.phone = "";
+
+  if (Object.keys(error).length > 0) return error;
+
+  // Jika semua inputan valid, maka lanjutkan proses request order
+  const newOrder = await createOrder(realData);
+
+  return redirect(`/order/${newOrder.id}`);
 }
 
 export default CreateOrder;
