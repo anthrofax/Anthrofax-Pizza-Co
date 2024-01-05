@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 // Test ID: IIDSAT
 
+import {useLoaderData} from 'react-router-dom'
+import { getOrder } from "../../services/apiRestaurant.js";
 import {
   calcMinutesLeft,
   formatCurrency,
@@ -51,14 +53,14 @@ function Order() {
     priorityPrice,
     orderPrice,
     estimatedDelivery,
-    cart,
-  } = order;
+    cart
+  } = useLoaderData();
   const deliveryIn = calcMinutesLeft(estimatedDelivery);
 
   return (
     <div>
       <div>
-        <h2>Status</h2>
+        <h2>Status </h2>
 
         <div>
           {priority && <span>Priority</span>}
@@ -82,6 +84,12 @@ function Order() {
       </div>
     </div>
   );
+}
+
+export async function loader({params}) {
+  const order = await getOrder(params.orderId);
+
+  return order
 }
 
 export default Order;
