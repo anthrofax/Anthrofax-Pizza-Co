@@ -11,6 +11,7 @@ import {
 } from '../../utils/helpers';
 import { useFetcher } from 'react-router-dom';
 import { useEffect } from 'react';
+import UpdateOrder from './UpdateOrder.jsx';
 
 function Order() {
   const order = useLoaderData();
@@ -36,8 +37,6 @@ function Order() {
     },
     [fetcher]
   );
-
-  console.log(fetcher.data)
 
   return (
     <div className="space-y-8 px-4 py-6">
@@ -77,6 +76,8 @@ function Order() {
           />
         ))}
       </ul>
+
+      {!priority && <UpdateOrder />}
 
       <div className="space-y-2 bg-stone-200 px-6 py-5">
         <p className="text-sm font-medium text-stone-600">
