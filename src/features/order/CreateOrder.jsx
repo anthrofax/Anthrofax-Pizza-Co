@@ -163,8 +163,6 @@ export async function action({ request }) {
     location: JSON.parse(data.location)
   };
 
-  console.log(order);
-
   const errors = {};
   if (!isValidPhone(order.phone))
     errors.phone =
