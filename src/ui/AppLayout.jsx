@@ -19,7 +19,7 @@ function AppLayout() {
         </main>
       </div>
 
-      <CartOverview />
+      <CartOverview/>
     </div>
   );
 }
